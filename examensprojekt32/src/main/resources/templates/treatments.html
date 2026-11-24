@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Behandlinger</title>
+</head>
+<body>
+<h1>Vores behandlinger</h1>
+
+<p th:if="${treatments.isEmpty()}">Der er ingen behandlinger lige nu.</p>
+
+<div th:each="treatment : ${treatments}">
+    <h2 th:text="${treatment.name}">Behandlingsnavn</h2>
+    <p th:text="${treatment.description}">Beskrivelse</p>
+    <p th:text="|Pris: ${treatment.price} kr.|">Pris</p>
+    <p th:text="|Varighed: ${treatment.durationMinutes} min|">Varighed</p>
+</div>
+
+</body>
+</html>
