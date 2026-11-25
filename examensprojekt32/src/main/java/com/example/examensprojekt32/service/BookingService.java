@@ -15,7 +15,7 @@ public class BookingService {
     }
 
     public List<TreatmentData> getAllTreatments() {
-        return treatmentProvider.getAllTreatments();
+        return List.copyOf(treatmentProvider.getAllTreatments());
     }
 
     public List<TreatmentData> getSelectedTreatments(List<Long> ids) {
@@ -26,7 +26,7 @@ public class BookingService {
         }
 
         List<TreatmentData> treatments =
-                treatmentProvider.getSelectedTreatments(ids);
+                List.copyOf(treatmentProvider.getSelectedTreatments(ids));
 
         if (treatments.size() != ids.size()) {
             throw new IllegalArgumentException(
