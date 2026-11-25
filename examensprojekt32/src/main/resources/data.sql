@@ -1,4 +1,4 @@
-REPLACE INTO treatment (id, name, description, price, duration_minutes) VALUES
+INSERT IGNORE INTO treatment (id, name, description, price, duration_minutes) VALUES
 (1, 'Hijama Cupping', 'Traditionel vakuumkop-behandling for cirkulation og afslapning.', 399.00, 30),
 (2, 'Cupping Massage', 'Blide vakuumkopper masseres rundt for dyb afslapning.', 299.00, 30),
 (3, 'Vibrations Terapi', 'Massagepistol og varmehoved til muskler og restitution.', 299.00, 30),
