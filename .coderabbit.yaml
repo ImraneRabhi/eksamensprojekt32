@@ -1,0 +1,4 @@
+reviews:
+  path_filters:
+    - "examensprojekt32/**"
+    - "!**/.idea/**"
