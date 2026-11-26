@@ -1,4 +1,6 @@
 package com.example.examensprojekt32.dto;
 
-public record TreatmentSelection() {
+import java.util.List;
+
+public record TreatmentSelection(List<Long> treatmentIds) {
 }

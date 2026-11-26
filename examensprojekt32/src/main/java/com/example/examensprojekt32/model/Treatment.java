@@ -4,11 +4,13 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import com.example.examensprojekt32.service.TreatmentData;
+
 
 import java.math.BigDecimal;
 
 @Entity
-public class Treatment {
+public class Treatment implements TreatmentData {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

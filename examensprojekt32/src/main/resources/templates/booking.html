@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Book din behandling</title>
+
+    <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="brand">
+        Cupping · Massage
+    </div>
+</header>
+
+<section class="hero">
+
+    <div class="subtitle">
+        Online reservation
+    </div>
+
+    <h1>Book din behandling</h1>
+
+    <p>Massage &amp; Hijama Cupping</p>
+
+    <p>Vælg den behandling, der passer bedst til dig.</p>
+
+</section>
+
+<main class="booking-container">
+
+    <h2>Vælg behandling</h2>
+
+    <p class="description">
+        Vælg én eller flere behandlinger for at se
+        den samlede pris og varighed.
+    </p>
+
+    <p class="error-message"
+       th:if="${error != null}"
+       th:text="${error}">
+    </p>
+
+    <p th:if="${treatments.isEmpty()}">
+        Der er ingen behandlinger tilgængelige.
+    </p>
+
+    <form th:action="@{/booking}" method="post">
+
+        <label class="treatment-card"
+               th:each="treatment : ${treatments}">
+
+            <input type="checkbox"
+                   name="treatmentIds"
+                   th:value="${treatment.id}"
+                   th:checked="${session.selectedTreatmentIds != null
+                   and session.selectedTreatmentIds.contains(treatment.id)}">
+
+            <div class="treatment-info">
+
+                <h3 th:text="${treatment.name}"></h3>
+
+                <p th:text="|Varighed: ${treatment.durationMinutes} min.|">
+                </p>
+
+            </div>
+
+            <span class="treatment-price"
+                  th:text="|${treatment.price} kr.|">
+            </span>
+
+        </label>
+
+        <button type="submit" class="submit-button">
+            Beregn pris og varighed
+        </button>
+
+    </form>
+
+    <section class="booking-summary"
+             th:if="${selectedTreatments != null}">
+
+        <h2>Din booking</h2>
+
+        <ul>
+            <li th:each="treatment : ${selectedTreatments}"
+                th:text="${treatment.name}">
+            </li>
+        </ul>
+
+        <div class="summary-row">
+
+            <span>Samlet varighed</span>
+
+            <strong th:text="|${totalDuration} min.|">
+            </strong>
+
+        </div>
+
+        <div class="summary-row">
+
+            <span>Samlet pris</span>
+
+            <strong th:text="|${totalPrice} kr.|">
+            </strong>
+
+        </div>
+
+    </section>
+
+</main>
+
+</body>
+</html>
