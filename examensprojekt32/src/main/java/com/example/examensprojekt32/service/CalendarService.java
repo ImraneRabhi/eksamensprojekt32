@@ -2,11 +2,8 @@ package com.example.examensprojekt32.service;
 
 import com.example.examensprojekt32.model.WorkingDay;
 import com.example.examensprojekt32.model.ScheduleException;
-import com.example.examensprojekt32.model.TimeSlot;
-import com.example.examensprojekt32.model.TimeSlotStatus;
 import com.example.examensprojekt32.repository.WorkingDayRepository;
 import com.example.examensprojekt32.repository.ScheduleExceptionRepository;
-import com.example.examensprojekt32.repository.TimeSlotRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,34 +18,79 @@ public class CalendarService {
 
     private final WorkingDayRepository workingDayRepository;
     private final ScheduleExceptionRepository scheduleExceptionRepository;
-    private final TimeSlotRepository timeSlotRepository;
 
     public CalendarService(
             WorkingDayRepository workingDayRepository,
-            ScheduleExceptionRepository scheduleExceptionRepository,
-            TimeSlotRepository timeSlotRepository) {
+            ScheduleExceptionRepository scheduleExceptionRepository) {
 
         this.workingDayRepository = workingDayRepository;
         this.scheduleExceptionRepository = scheduleExceptionRepository;
-        this.timeSlotRepository = timeSlotRepository;
     }
 
     // Hent alle faste arbejdsdage
+
     public List<WorkingDay> getAllWorkingDays() {
         return workingDayRepository.findAll();
     }
 
-    // Kontroller om en dato er en arbejdsdag
-    public boolean isWorkingDay(LocalDate date) {
-        return scheduleExceptionRepository.findByDate(date)
-                .map(ScheduleException::isWorkingDay)
-                .orElseGet(() -> workingDayRepository
-                        .findByDayOfWeek(date.getDayOfWeek())
-                        .map(WorkingDay::isActive)
-                        .orElse(false));
+    // Hent alle registrerede undtagelser
+
+    public List<ScheduleException> getAllScheduleExceptions() {
+        return scheduleExceptionRepository.findAll();
     }
 
-    // Opdater en fast arbejdsdag
+    // Kontrollér om en bestemt dato er en arbejdsdag
+
+    public boolean isWorkingDay(LocalDate date) {
+
+        return scheduleExceptionRepository.findByDate(date)
+                .map(ScheduleException::isWorkingDay)
+                .orElseGet(() ->
+                        workingDayRepository.findByDayOfWeek(date.getDayOfWeek())
+                                .map(WorkingDay::isActive)
+                                .orElse(false));
+    }
+
+    // Hent gældende starttid for en bestemt dato (US03)
+
+    public LocalTime getStartTime(LocalDate date) {
+
+        ScheduleException exception =
+                scheduleExceptionRepository.findByDate(date).orElse(null);
+
+        if (exception != null) {
+            return exception.isWorkingDay()
+                    ? exception.getStartTime()
+                    : null;
+        }
+
+        return workingDayRepository.findByDayOfWeek(date.getDayOfWeek())
+                .filter(WorkingDay::isActive)
+                .map(WorkingDay::getStartTime)
+                .orElse(null);
+    }
+
+    // Hent gældende sluttid for en bestemt dato (US03)
+
+    public LocalTime getEndTime(LocalDate date) {
+
+        ScheduleException exception =
+                scheduleExceptionRepository.findByDate(date).orElse(null);
+
+        if (exception != null) {
+            return exception.isWorkingDay()
+                    ? exception.getEndTime()
+                    : null;
+        }
+
+        return workingDayRepository.findByDayOfWeek(date.getDayOfWeek())
+                .filter(WorkingDay::isActive)
+                .map(WorkingDay::getEndTime)
+                .orElse(null);
+    }
+
+    // Opdatér en fast arbejdsdag
+
     public WorkingDay updateWorkingDay(
             DayOfWeek dayOfWeek,
             LocalTime startTime,
@@ -59,8 +101,9 @@ public class CalendarService {
 
         WorkingDay workingDay = workingDayRepository
                 .findByDayOfWeek(dayOfWeek)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Arbejdsdagen findes ikke."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Arbejdsdagen findes ikke."));
 
         workingDay.setStartTime(startTime);
         workingDay.setEndTime(endTime);
@@ -70,6 +113,7 @@ public class CalendarService {
     }
 
     // Tilføj en ekstra arbejdsdag
+
     public ScheduleException addExtraWorkingDay(
             LocalDate date,
             LocalTime startTime,
@@ -91,7 +135,8 @@ public class CalendarService {
         return scheduleExceptionRepository.save(exception);
     }
 
-    // Registrer en fridag
+    // Registrér ferie, sygdom eller anden fridag
+
     public ScheduleException removeWorkingDay(
             LocalDate date,
             String reason) {
@@ -112,6 +157,7 @@ public class CalendarService {
     }
 
     // Ændr arbejdstiden på en bestemt dato
+
     public ScheduleException updateWorkingHours(
             LocalDate date,
             LocalTime startTime,
@@ -138,70 +184,23 @@ public class CalendarService {
         return scheduleExceptionRepository.save(exception);
     }
 
-    // Hent registrerede tidsintervaller på en dato
-    public List<TimeSlot> getTimeSlots(LocalDate date) {
-        return timeSlotRepository
-                .findByDateOrderByStartTimeAsc(date);
-    }
+    // Fjern en registreret undtagelse
 
-    // Bloker et tidsinterval
-    public TimeSlot blockTimeSlot(
-            LocalDate date,
-            LocalTime startTime,
-            LocalTime endTime) {
+    public void deleteScheduleException(Long id) {
 
-        validateDate(date);
-        validateWorkingHours(startTime, endTime);
-
-        if (!isWorkingDay(date)) {
-            throw new IllegalArgumentException(
-                    "Datoen er ikke en arbejdsdag.");
-        }
-
-        validateWithinWorkingHours(date, startTime, endTime);
-
-        boolean overlapping = getTimeSlots(date)
-                .stream()
-                .filter(slot ->
-                        slot.getStatus() == TimeSlotStatus.BLOCKED)
-                .anyMatch(slot ->
-                        startTime.isBefore(slot.getEndTime())
-                                && endTime.isAfter(slot.getStartTime()));
-
-        if (overlapping) {
-            throw new IllegalArgumentException(
-                    "Tidsintervallet overlapper en blokeret tid.");
-        }
-
-        TimeSlot timeSlot = new TimeSlot(
-                date,
-                startTime,
-                endTime,
-                TimeSlotStatus.BLOCKED
-        );
-
-        return timeSlotRepository.save(timeSlot);
-    }
-
-    // Frigiv et blokeret tidsinterval
-    public void unblockTimeSlot(Long id) {
-
-        TimeSlot timeSlot = timeSlotRepository
+        ScheduleException exception = scheduleExceptionRepository
                 .findById(id)
-                .orElseThrow(() -> new IllegalArgumentException(
-                        "Tidsintervallet findes ikke."));
+                .orElseThrow(() ->
+                        new IllegalArgumentException(
+                                "Undtagelsen findes ikke."));
 
-        validateDate(timeSlot.getDate());
+        validateDate(exception.getDate());
 
-        if (timeSlot.getStatus() != TimeSlotStatus.BLOCKED) {
-            throw new IllegalArgumentException(
-                    "Tidsintervallet er ikke blokeret.");
-        }
-
-        timeSlotRepository.delete(timeSlot);
+        scheduleExceptionRepository.delete(exception);
     }
 
-    // Valider start- og sluttid
+    // Validering af arbejdstider
+
     private void validateWorkingHours(
             LocalTime startTime,
             LocalTime endTime) {
@@ -217,7 +216,8 @@ public class CalendarService {
         }
     }
 
-    // Valider dato
+    // Validering af dato
+
     private void validateDate(LocalDate date) {
 
         if (date == null) {
@@ -228,44 +228,6 @@ public class CalendarService {
         if (date.isBefore(LocalDate.now())) {
             throw new IllegalArgumentException(
                     "Du kan ikke ændre en dato i fortiden.");
-        }
-    }
-
-    // Kontroller om tiden ligger inden for arbejdstiden
-    private void validateWithinWorkingHours(
-            LocalDate date,
-            LocalTime startTime,
-            LocalTime endTime) {
-
-        ScheduleException exception = scheduleExceptionRepository
-                .findByDate(date)
-                .orElse(null);
-
-        LocalTime workingStart;
-        LocalTime workingEnd;
-
-        if (exception != null) {
-
-            workingStart = exception.getStartTime();
-            workingEnd = exception.getEndTime();
-
-        } else {
-
-            WorkingDay workingDay = workingDayRepository
-                    .findByDayOfWeek(date.getDayOfWeek())
-                    .orElseThrow(() -> new IllegalArgumentException(
-                            "Arbejdsdagen findes ikke."));
-
-            workingStart = workingDay.getStartTime();
-            workingEnd = workingDay.getEndTime();
-        }
-
-        if (workingStart == null || workingEnd == null
-                || startTime.isBefore(workingStart)
-                || endTime.isAfter(workingEnd)) {
-
-            throw new IllegalArgumentException(
-                    "Tiden ligger uden for arbejdstiden.");
         }
     }
 }

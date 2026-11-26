@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Kalenderadministration</title>
+
+  <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+
+<body>
+
+<!-- Navigation -->
+
+<nav class="navbar">
+  <div class="brand">Kalenderadministration</div>
+</nav>
+
+<main class="container">
+
+  <!-- Overskrift -->
+
+  <header>
+    <h1>Min kalender</h1>
+    <p>Administrér dine arbejdsdage, arbejdstider og fridage.</p>
+  </header>
+
+  <!-- Succesbesked -->
+
+  <div class="success"
+       th:if="${success}"
+       th:text="${success}">
+  </div>
+
+  <!-- Fejlbesked -->
+
+  <div class="error"
+       th:if="${error}"
+       th:text="${error}">
+  </div>
+
+  <!-- Faste arbejdsdage -->
+
+  <section class="card">
+
+    <h2>Faste arbejdsdage</h2>
+
+    <p>Administrér dine normale ugentlige arbejdstider.</p>
+
+    <form class="working-day"
+          th:each="day : ${workingDays}"
+          th:action="@{/admin/calendar/working-day/update}"
+          method="post">
+
+      <input type="hidden"
+             name="dayOfWeek"
+             th:value="${day.dayOfWeek}">
+
+      <strong th:switch="${day.dayOfWeek.name()}">
+
+        <span th:case="'MONDAY'">Mandag</span>
+        <span th:case="'TUESDAY'">Tirsdag</span>
+        <span th:case="'WEDNESDAY'">Onsdag</span>
+        <span th:case="'THURSDAY'">Torsdag</span>
+        <span th:case="'FRIDAY'">Fredag</span>
+        <span th:case="'SATURDAY'">Lørdag</span>
+        <span th:case="'SUNDAY'">Søndag</span>
+
+      </strong>
+
+      <label>
+        <input type="checkbox"
+               name="active"
+               value="true"
+               th:checked="${day.active}">
+
+        Åben
+      </label>
+
+      <label>
+        Starttid
+
+        <input type="time"
+               name="startTime"
+               th:value="${day.startTime}"
+               required>
+      </label>
+
+      <label>
+        Sluttid
+
+        <input type="time"
+               name="endTime"
+               th:value="${day.endTime}"
+               required>
+      </label>
+
+      <button type="submit">
+        Gem
+      </button>
+
+    </form>
+
+  </section>
+
+  <!-- Ekstra arbejdsdag -->
+
+  <section class="card">
+
+    <h2>Tilføj ekstra arbejdsdag</h2>
+
+    <p>Åbn for bookinger på en bestemt dato.</p>
+
+    <form th:action="@{/admin/calendar/extra-day}"
+          method="post">
+
+      <label for="extraDate">Dato</label>
+
+      <input type="date"
+             id="extraDate"
+             name="date"
+             th:min="${T(java.time.LocalDate).now()}"
+             required>
+
+      <label for="extraStart">Starttid</label>
+
+      <input type="time"
+             id="extraStart"
+             name="startTime"
+             value="08:00"
+             required>
+
+      <label for="extraEnd">Sluttid</label>
+
+      <input type="time"
+             id="extraEnd"
+             name="endTime"
+             value="15:00"
+             required>
+
+      <button type="submit">
+        Tilføj arbejdsdag
+      </button>
+
+    </form>
+
+  </section>
+
+  <!-- Ferie og sygdom -->
+
+  <section class="card">
+
+    <h2>Registrér ferie eller sygdom</h2>
+
+    <p>Luk for bookinger på en bestemt dato.</p>
+
+    <form th:action="@{/admin/calendar/day-off}"
+          method="post">
+
+      <label for="dayOffDate">Dato</label>
+
+      <input type="date"
+             id="dayOffDate"
+             name="date"
+             th:min="${T(java.time.LocalDate).now()}"
+             required>
+
+      <label for="reason">Årsag</label>
+
+      <select id="reason" name="reason" required>
+
+        <option value="Sygdom">Sygdom</option>
+        <option value="Ferie">Ferie</option>
+        <option value="Andet">Andet</option>
+
+      </select>
+
+      <button type="submit">
+        Registrér fridag
+      </button>
+
+    </form>
+
+  </section>
+
+  <!-- Ændring af arbejdstid -->
+
+  <section class="card">
+
+    <h2>Ændr arbejdstid</h2>
+
+    <p>Ændr arbejdstiden på en bestemt dato uden at ændre din faste arbejdsuge.</p>
+
+    <form th:action="@{/admin/calendar/hours/update}"
+          method="post">
+
+      <label for="updateDate">Dato</label>
+
+      <input type="date"
+             id="updateDate"
+             name="date"
+             th:min="${T(java.time.LocalDate).now()}"
+             required>
+
+      <label for="updateStart">Ny starttid</label>
+
+      <input type="time"
+             id="updateStart"
+             name="startTime"
+             value="08:00"
+             required>
+
+      <label for="updateEnd">Ny sluttid</label>
+
+      <input type="time"
+             id="updateEnd"
+             name="endTime"
+             value="15:00"
+             required>
+
+      <button type="submit">
+        Opdatér arbejdstid
+      </button>
+
+    </form>
+
+  </section>
+
+  <!-- Registrerede undtagelser -->
+
+  <section class="card">
+
+    <h2>Registrerede undtagelser</h2>
+
+    <p>Oversigt over ekstra arbejdsdage, fridage og ændrede arbejdstider.</p>
+
+    <p th:if="${#lists.isEmpty(scheduleExceptions)}">
+      Der er ingen registrerede undtagelser.
+    </p>
+
+    <div class="exception"
+         th:each="exception : ${scheduleExceptions}">
+
+      <strong th:text="${#temporals.format(exception.date, 'dd-MM-yyyy')}">
+      </strong>
+
+      <p th:text="${exception.reason}"></p>
+
+      <!-- Hvis arbejdsdagen er åben -->
+
+      <div th:if="${exception.workingDay}">
+
+        <span>Åben: </span>
+
+        <span th:text="${exception.startTime}"></span>
+
+        <span> – </span>
+
+        <span th:text="${exception.endTime}"></span>
+
+      </div>
+
+      <!-- Hvis arbejdsdagen er lukket -->
+
+      <p th:unless="${exception.workingDay}">
+        Lukket hele dagen
+      </p>
+
+      <!-- Fjern undtagelse -->
+
+      <form th:action="@{/admin/calendar/exception/delete}"
+            method="post">
+
+        <input type="hidden"
+               name="id"
+               th:value="${exception.id}">
+
+        <button type="submit"
+                class="delete-button"
+                onclick="return confirm('Vil du fjerne denne undtagelse?')">
+
+          Fjern undtagelse
+
+        </button>
+
+      </form>
+
+    </div>
+
+  </section>
+
+</main>
+
+</body>
+
+</html>
