@@ -20,11 +20,11 @@ body {
     min-height: 100vh;
 
     background:
-        linear-gradient(
-            rgba(0, 0, 0, 0.65),
-            rgba(0, 0, 0, 0.85)
-        ),
-        url("../images/background.jpg");
+            linear-gradient(
+                    rgba(0, 0, 0, 0.65),
+                    rgba(0, 0, 0, 0.85)
+            ),
+            url("../images/background.jpg");
 
     background-color: #211d17;
     background-size: cover;
@@ -158,14 +158,14 @@ body {
     white-space: nowrap;
 }
 
-/* Knap */
+/* Bookingknap */
 
 .submit-button {
     width: 100%;
     padding: 17px;
     margin-top: 15px;
     background: var(--gold);
-    color: #151310;
+    color: var(--dark);
     border: none;
     border-radius: 10px;
     font-size: 16px;
@@ -220,7 +220,10 @@ body {
     color: var(--gold);
 }
 
-.error-message {
+/* Fejlbeskeder */
+
+.error-message,
+.container .error {
     color: #ff9b9b;
     background: rgba(255, 70, 70, 0.08);
     border: 1px solid #793d3d;
@@ -229,7 +232,225 @@ body {
     margin-bottom: 20px;
 }
 
-/* Mobilvenligt design */
+/* ========================================
+   KALENDERADMINISTRATION - US05
+   ======================================== */
+
+.container {
+    max-width: 1100px;
+    margin: 50px auto;
+    padding: 25px;
+}
+
+/* Kalenderoverskrift */
+
+.container header {
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+.container header h1 {
+    font-family: Georgia, serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: normal;
+    color: var(--gold);
+    margin-bottom: 15px;
+}
+
+.container header p {
+    color: var(--muted);
+    line-height: 1.7;
+}
+
+/* Kalenderkort */
+
+.container .card {
+    background: var(--dark);
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+}
+
+.container .card h2 {
+    font-family: Georgia, serif;
+    font-size: 28px;
+    font-weight: normal;
+    color: var(--gold);
+    margin-bottom: 25px;
+}
+
+.container .card p {
+    color: var(--muted);
+    line-height: 1.6;
+}
+
+/* Faste arbejdsdage */
+
+.working-day {
+    display: grid;
+    grid-template-columns: 1.2fr 0.8fr 1fr 1fr auto;
+    align-items: center;
+    gap: 18px;
+    padding: 18px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.working-day:last-child {
+    border-bottom: none;
+}
+
+.working-day strong {
+    font-size: 17px;
+    font-weight: 500;
+}
+
+/* Formularer */
+
+.container label {
+    display: block;
+    color: var(--muted);
+    font-size: 14px;
+    margin: 12px 0 8px;
+}
+
+.container input[type="date"],
+.container input[type="time"],
+.container input[type="text"],
+.container select,
+.container textarea {
+    width: 100%;
+    padding: 13px;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 15px;
+    color-scheme: dark;
+    transition: 0.2s ease;
+}
+
+.container input:focus,
+.container select:focus,
+.container textarea:focus {
+    outline: none;
+    border-color: var(--gold);
+    box-shadow: 0 0 8px rgba(212, 175, 87, 0.15);
+}
+
+/* Checkbox til arbejdsdage */
+
+.container input[type="checkbox"] {
+    width: 19px;
+    height: 19px;
+    accent-color: var(--gold);
+    cursor: pointer;
+    vertical-align: middle;
+    margin-right: 6px;
+}
+
+/* Kalenderknapper */
+
+.container button {
+    background: var(--gold);
+    color: var(--dark);
+    border: none;
+    border-radius: 8px;
+    padding: 13px 20px;
+    margin-top: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.container button:hover {
+    background: var(--gold-hover);
+    transform: translateY(-1px);
+}
+
+.container button:active {
+    transform: translateY(0);
+}
+
+.container button:focus-visible {
+    outline: 2px solid var(--gold-hover);
+    outline-offset: 4px;
+}
+
+/* Registrerede undtagelser */
+
+.exception {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--gold);
+    border-radius: 10px;
+    padding: 20px;
+    margin-top: 15px;
+}
+
+.exception strong {
+    color: var(--gold);
+    font-size: 18px;
+}
+
+.exception p {
+    margin: 10px 0;
+}
+
+.exception span {
+    color: var(--text);
+}
+
+/* Slet undtagelse */
+
+.container .delete-button {
+    background: #783535;
+    color: var(--text);
+}
+
+.container .delete-button:hover {
+    background: #a64444;
+}
+
+/* Succesbesked */
+
+.container .success {
+    background: rgba(50, 160, 90, 0.12);
+    color: #8de5a8;
+    border: 1px solid #386d48;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 20px;
+}
+
+/* ========================================
+   MOBILVENLIGT DESIGN
+   ======================================== */
+
+@media (max-width: 800px) {
+
+    .container {
+        margin: 20px auto;
+        padding: 15px;
+    }
+
+    .container .card {
+        padding: 20px;
+    }
+
+    .working-day {
+        grid-template-columns: 1fr 1fr;
+        gap: 12px;
+    }
+
+    .working-day button {
+        grid-column: 1 / -1;
+        width: 100%;
+    }
+}
 
 @media (max-width: 600px) {
 
@@ -262,5 +483,21 @@ body {
 
     .treatment-price {
         font-size: 14px;
+    }
+
+    .container .card h2 {
+        font-size: 23px;
+    }
+
+    .container header h1 {
+        font-size: 36px;
+    }
+
+    .container button {
+        width: 100%;
+    }
+
+    .exception {
+        padding: 15px;
     }
 }
