@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
+    <title>Vælg tid</title>
+
+    <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+
+<body>
+
+<header class="navbar">
+    <div class="brand">
+        Cupping · Massage
+    </div>
+</header>
+
+<section class="hero">
+
+    <div class="subtitle">
+        Online reservation
+    </div>
+
+    <h1>Vælg dato og tid</h1>
+
+    <p th:text="|Samlet varighed: ${totalDuration} min.|"></p>
+
+</section>
+
+<main class="booking-container">
+
+    <h2>Vælg dato</h2>
+
+    <p class="description">
+        Vælg en dag i kalenderen for at se de ledige tider.
+        Grå dage er lukkede eller fuldt bookede.
+    </p>
+
+    <p class="error-message"
+       th:if="${error != null}"
+       th:text="${error}">
+    </p>
+
+    <p class="description"
+       th:if="${availableDates.isEmpty()}">
+        Der er ingen ledige datoer de næste 30 dage.
+    </p>
+
+    <div class="calendar">
+
+        <div class="calendar-header">Man</div>
+        <div class="calendar-header">Tir</div>
+        <div class="calendar-header">Ons</div>
+        <div class="calendar-header">Tor</div>
+        <div class="calendar-header">Fre</div>
+        <div class="calendar-header">Lør</div>
+        <div class="calendar-header">Søn</div>
+
+        <th:block th:each="week : ${calendarWeeks}">
+            <th:block th:each="day : ${week}">
+
+                <a th:if="${day.available}"
+                   class="calendar-day available"
+                   th:classappend="${day.selected} ? 'selected'"
+                   th:href="@{/booking/times(date=${day.date})}">
+                    <span class="calendar-day-number"
+                          th:text="${day.date.dayOfMonth}"></span>
+                    <span class="calendar-day-month"
+                          th:text="${#temporals.format(day.date, 'MMM')}"></span>
+                </a>
+
+                <span th:unless="${day.available}"
+                      class="calendar-day unavailable">
+                    <span class="calendar-day-number"
+                          th:text="${day.date.dayOfMonth}"></span>
+                    <span class="calendar-day-month"
+                          th:text="${#temporals.format(day.date, 'MMM')}"></span>
+                </span>
+
+            </th:block>
+        </th:block>
+
+    </div>
+
+    <section class="booking-summary"
+             th:if="${selectedDate != null}">
+
+        <h2 th:text="${#temporals.format(selectedDate, 'EEEE d. MMMM')}"></h2>
+
+        <p class="description"
+           th:if="${availableTimes == null or availableTimes.isEmpty()}">
+            Der er ingen ledige tider denne dag.
+        </p>
+
+        <form class="time-slots"
+              th:if="${availableTimes != null and !availableTimes.isEmpty()}"
+              th:action="@{/booking/details}"
+              method="get">
+
+            <input type="hidden"
+                   name="date"
+                   th:value="${selectedDate}">
+
+            <button class="time-slot"
+                    type="submit"
+                    name="time"
+                    th:each="t : ${availableTimes}"
+                    th:value="${t}"
+                    th:text="${t}">
+            </button>
+
+        </form>
+
+    </section>
+
+    <a class="back-link" th:href="@{/booking}">
+        ← Tilbage til valg af behandling
+    </a>
+
+</main>
+
+</body>
+</html>
