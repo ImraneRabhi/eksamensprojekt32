@@ -56,6 +56,6 @@ public class BookingController {
             model.addAttribute("error", e.getMessage());
         }
 
-        return "booking";
+        return "home";
     }
 }
