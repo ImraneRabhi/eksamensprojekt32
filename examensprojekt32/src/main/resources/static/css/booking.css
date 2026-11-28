@@ -501,3 +501,153 @@ body {
         padding: 15px;
     }
 }
+/* ========================================
+   VÆLG DATO OG TID - US03
+   ======================================== */
+
+/* Link der ligner knap (fx "Vælg tid →") */
+
+a.submit-button {
+    display: block;
+    text-align: center;
+    text-decoration: none;
+}
+
+/* Kalender */
+
+.calendar {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 8px;
+    margin: 10px 0 30px;
+}
+
+.calendar-header {
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding-bottom: 6px;
+}
+
+/* Kalenderdage */
+
+.calendar-day {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: 1;
+    border-radius: 10px;
+    text-decoration: none;
+    transition: 0.2s ease;
+}
+
+.calendar-day-number {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.calendar-day-month {
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-top: 2px;
+}
+
+/* Ledig dag */
+
+.calendar-day.available {
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+}
+
+.calendar-day.available .calendar-day-month {
+    color: var(--muted);
+}
+
+.calendar-day.available:hover {
+    border-color: var(--gold);
+    background: #242018;
+}
+
+/* Valgt dag */
+
+.calendar-day.selected {
+    background: rgba(212, 175, 87, 0.12);
+    border-color: var(--gold);
+    box-shadow: 0 0 12px rgba(212, 175, 87, 0.15);
+}
+
+.calendar-day.selected .calendar-day-number {
+    color: var(--gold);
+}
+
+/* Lukket eller fuldt booket dag */
+
+.calendar-day.unavailable {
+    color: #4a443b;
+    border: 1px solid transparent;
+}
+
+/* Ledige tider */
+
+.booking-summary h2::first-letter {
+    text-transform: uppercase;
+}
+
+.time-slots {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.time-slot {
+    padding: 13px 0;
+    background: var(--card);
+    color: var(--text);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.time-slot:hover {
+    background: var(--gold);
+    color: var(--dark);
+    border-color: var(--gold);
+}
+
+/* Tilbage-link */
+
+.back-link {
+    display: inline-block;
+    margin-top: 25px;
+    color: var(--muted);
+    text-decoration: none;
+}
+
+.back-link:hover {
+    color: var(--gold);
+}
+
+/* Mobilvenligt design - US03 */
+
+@media (max-width: 600px) {
+
+    .calendar {
+        gap: 5px;
+    }
+
+    .calendar-day-number {
+        font-size: 15px;
+    }
+
+    .calendar-day-month {
+        display: none;
+    }
+}
