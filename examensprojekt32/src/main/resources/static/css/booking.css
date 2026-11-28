@@ -229,6 +229,63 @@ body {
     margin-bottom: 20px;
 }
 
+.error-message {
+    color: #ff9b9b;
+    background: rgba(255, 70, 70, 0.08);
+    border: 1px solid #793d3d;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+/* Login */
+
+.login-container {
+    max-width: 420px;
+}
+
+.login-container label {
+    display: block;
+    font-weight: bold;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.login-container input {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+/* Mobilvenligt design */
+
+@media (max-width: 600px) {
+
+    .navbar {
+        padding: 22px;
+        text-align: center;
+    }
+
+    /* ... resten af mobil-delen som før ... */
+
+    .treatment-price {
+        font-size: 14px;
+    }
+}
+
+
 /* Mobilvenligt design */
 
 @media (max-width: 600px) {
@@ -263,4 +320,6 @@ body {
     .treatment-price {
         font-size: 14px;
     }
+
+
 }
