@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin</title>
+  <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="brand">Admin</span>
+</nav>
+
+<section class="hero">
+  <p class="subtitle">Administration</p>
+  <h1 th:text="|Velkommen, ${adminUsername}|">Velkommen</h1>
+</section>
+
+<main class="booking-container login-container">
+  <p class="description">Du er logget ind som admin.</p>
+
+  <form th:action="@{/admin/logout}" method="post">
+    <button type="submit" class="submit-button">Log ud</button>
+  </form>
+</main>
+
+</body>
+</html>

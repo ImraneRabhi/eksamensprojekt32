@@ -232,6 +232,40 @@ body {
     margin-bottom: 20px;
 }
 
+
+
+/* Login */
+
+.login-container {
+    max-width: 420px;
+}
+
+.login-container label {
+    display: block;
+    font-weight: bold;
+    color: var(--text);
+    font-size: 15px;
+    margin-bottom: 8px;
+}
+
+.login-container input {
+    display: block;
+    width: 100%;
+    padding: 14px;
+    margin-bottom: 28px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-size: 15px;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: var(--gold);
+}
+
+
 /* ========================================
    KALENDERADMINISTRATION - US05
    ======================================== */

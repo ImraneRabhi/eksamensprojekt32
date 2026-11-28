@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin login</title>
+  <link rel="stylesheet" th:href="@{/css/booking.css}">
+</head>
+<body>
+
+<nav class="navbar">
+  <span class="brand">Admin</span>
+</nav>
+
+<section class="hero">
+  <p class="subtitle">Kun for personale</p>
+  <h1>Admin login</h1>
+</section>
+
+<main class="booking-container login-container">
+
+  <div class="error-message" th:if="${error}" th:text="${error}">
+    Fejlbesked
+  </div>
+
+  <form th:action="@{/admin/login}" method="post">
+
+    <label for="username">Brugernavn</label>
+    <input type="text" id="username" name="username" required>
+
+    <label for="password">Adgangskode</label>
+    <input type="password" id="password" name="password" required>
+
+    <button type="submit" class="submit-button">Log ind</button>
+  </form>
+
+</main>
+
+</body>
+</html>
