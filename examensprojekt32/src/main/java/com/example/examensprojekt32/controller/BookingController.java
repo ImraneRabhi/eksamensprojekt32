@@ -70,7 +70,7 @@ public class BookingController {
             model.addAttribute("error", e.getMessage());
         }
 
-        return "booking";
+        return "home";
     }
 
     @GetMapping("/times")
@@ -110,28 +110,36 @@ public class BookingController {
         return "times";
     }
 
-    private List<List<CalendarDay>> buildCalendarWeeks(List<LocalDate> availableDates,
-                                                       LocalDate selectedDate) {
+    private List<List<CalendarDay>> buildCalendarWeeks(
+            List<LocalDate> availableDates,
+            LocalDate selectedDate) {
 
         Set<LocalDate> available = new HashSet<>(availableDates);
 
         LocalDate today = LocalDate.now();
         LocalDate lastDay = today.plusDays(DAYS_AHEAD - 1);
 
-        LocalDate start = today.with(TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
-        LocalDate end = lastDay.with(TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
+        LocalDate start = today.with(
+                TemporalAdjusters.previousOrSame(DayOfWeek.MONDAY));
+
+        LocalDate end = lastDay.with(
+                TemporalAdjusters.nextOrSame(DayOfWeek.SUNDAY));
 
         List<List<CalendarDay>> weeks = new ArrayList<>();
         List<CalendarDay> week = new ArrayList<>();
 
         for (LocalDate day = start; !day.isAfter(end); day = day.plusDays(1)) {
-            week.add(new CalendarDay(day, available.contains(day), day.equals(selectedDate)));
+            week.add(new CalendarDay(
+                    day,
+                    available.contains(day),
+                    day.equals(selectedDate)));
 
             if (week.size() == 7) {
                 weeks.add(week);
                 week = new ArrayList<>();
             }
         }
+
         return weeks;
     }
 }

@@ -1,0 +1,60 @@
+﻿<!DOCTYPE html>
+<html lang="da" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Cupping, massage og sportsbehandling på Amager hos Hijama Master DK.">
+    <title>Hijama Master DK</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}" href="/css/home.css">
+</head>
+<body>
+<a class="skip-link" href="#indhold">Gå til indhold</a>
+<header class="site-header"><div class="header-inner">
+    <a class="brand" th:href="@{/}" href="/" aria-label="Hijama Master DK – forside"><img th:src="@{/images/hm-logo.jpg}" src="/images/hm-logo.jpg" alt=""><span>HIJAMA MASTER DK</span></a>
+    <nav aria-label="Hovednavigation"><a th:href="@{/}" href="/" aria-current="page">Forside</a><a href="#behandlinger">Book tid</a></nav>
+</div></header>
+<div class="kufiya-band" aria-hidden="true"></div>
+<main id="indhold" class="container">
+    <div class="hero-image" role="img" aria-label="Cuppingbehandling i et varmt behandlingsrum"></div>
+    <section class="intro" aria-labelledby="hero-title">
+        <div class="ornament" aria-hidden="true"><span></span><svg viewBox="0 0 48 48"><path d="M24 3 31 11 42 13 40 24 42 35 31 37 24 45 17 37 6 35 8 24 6 13 17 11Z"/></svg><span></span></div>
+        <h1 id="hero-title" class="eyebrow">DET SUNNAH &amp; DET SUNDT</h1>
+        <p class="intro-text">Cupping, massage og sportsbehandling på Amager.</p>
+    </section>
+    <section id="behandlinger" class="treatments" aria-labelledby="treatments-title">
+        <div class="section-heading"><h2 id="treatments-title">Behandlinger &amp; priser</h2><span aria-hidden="true"></span></div>
+        <p class="booking-instructions">Vælg én eller flere behandlinger for at se samlet pris og varighed.</p>
+        <p class="booking-error" role="alert" th:if="${error != null}" th:text="${error}"></p>
+        <p class="empty-message" th:if="${treatments.isEmpty()}">Der er ingen behandlinger lige nu.</p>
+        <form th:action="@{/booking}" action="/booking" method="post">
+        <div class="treatment-list">
+            <label class="treatment-card" th:each="treatment : ${treatments}">
+                <input type="checkbox" name="treatmentIds" th:value="${treatment.id}" th:checked="${session.selectedTreatmentIds != null and session.selectedTreatmentIds.contains(treatment.id)}">
+                <span class="treatment-icon" aria-hidden="true"><svg viewBox="0 0 64 64"><path d="M13 47h38v6H13zM16 47V34c0-11 7-19 16-19s16 8 16 19v13M32 15v-4M28 7a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z"/></svg></span>
+                <span class="treatment-copy"><strong class="treatment-name" th:text="${treatment.name}">Behandlingsnavn</strong><span class="duration" th:text="|${treatment.durationMinutes} min|">30 min</span><span class="description" th:text="${treatment.description}">Beskrivelse</span></span>
+                <strong class="price" th:text="|${treatment.price} kr.|">Pris</strong>
+            </label>
+        </div>
+        <button class="booking-button calculate-button" type="submit">Beregn pris og varighed</button>
+        </form>
+        <section class="booking-summary" th:if="${selectedTreatments != null}" aria-live="polite">
+            <h2>Din booking</h2>
+            <ul><li th:each="treatment : ${selectedTreatments}" th:text="${treatment.name}"></li></ul>
+            <p>Samlet varighed: <strong th:text="|${totalDuration} min.|"></strong></p>
+            <p>Samlet pris: <strong th:text="|${totalPrice} kr.|"></strong></p>
+        </section>
+    </section>
+</main>
+<div class="kufiya-band" aria-hidden="true"></div>
+<footer>
+    <span>HIJAMA MASTER DK</span>
+    <span>Tingvej 17A, 2300 København S</span>
+    <nav class="social-links" aria-label="Sociale medier">
+        <a href="https://www.instagram.com/hijama.master.dk/">Instagram</a>
+        <a href="https://www.facebook.com/p/HijamaMaster-DK-100092819319862/">Facebook</a>
+        <a href="https://www.tiktok.com/@hijama_master_dk">TikTok</a>
+        <a href="https://www.threads.com/@hijama.master.dk">Threads</a>
+    </nav>
+</footer>
+</body>
+</html>
